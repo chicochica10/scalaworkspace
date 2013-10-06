@@ -1,0 +1,4 @@
+scalaworkspace
+==============
+
+Scala Workspace
