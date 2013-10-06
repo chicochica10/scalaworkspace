@@ -1,0 +1,247 @@
+package funsets
+
+import common._
+
+/**
+ * 2. Purely Functional Sets.
+ */
+object FunSets {
+  /**
+   * We represent a set by its characteristic function, i.e.
+   * its `contains` predicate.
+   */
+  type Set = Int => Boolean
+
+  /**
+   * Indicates whether a set contains a given element.
+   */
+  def contains(s: Set, elem: Int): Boolean = s(elem)
+
+  /**
+   * Returns the set of the one given element.
+   */
+  def singletonSet(elem: Int): Set = x => elem == x
+
+  println("1.- " + contains(singletonSet(1), 2)) //false
+  println("2.- " + contains(singletonSet(1), 1)) //true
+
+  /**
+   * Returns the union of the two given sets,
+   * the sets of all elements that are in either `s` or `t`.
+   */
+  def union(s: Set, t: Set): Set = x => (contains(s, x) || contains(t, x))
+
+  val s = singletonSet(1)
+  val t = singletonSet(2)
+
+  println("3.- " + contains(union(s, t), 1)) //true
+  println("4.- " + contains(union(s, t), 2)) //true
+  println("5.- " + contains(union(s, t), 3)) // false
+
+  /**
+   * Returns the intersection of the two given sets,
+   * the set of all elements that are both in `s` and `t`.
+   */
+  def intersect(s: Set, t: Set): Set = x => (contains(s, x) && contains(t, x))
+
+  val u = singletonSet(2)
+  val v = singletonSet(3)
+  val st = union(s, t) //{1,2}
+  val uv = union(u, v) //{2,3}
+  println("6.- " + contains(intersect(st, uv), 2)) //true
+  println("7.- " + contains(intersect(st, uv), 3)) //false
+
+  /**
+   * Returns the difference of the two given sets,
+   * the set of all elements of `s` that are not in `t`.
+   */
+  def diff(s: Set, t: Set): Set = x => contains(s, x) && !contains(t, x) && !contains(intersect(s, t), x)
+
+  val s1 = singletonSet(1)
+  val s2 = singletonSet(2)
+  val s3 = singletonSet(3)
+  val s4 = singletonSet(4)
+
+  val t3 = singletonSet(3)
+  val t4 = singletonSet(4)
+  val t5 = singletonSet(5)
+  val t6 = singletonSet(6)
+
+  val s12 = union(s1, s2)
+  val s123 = union(s12, s3)
+  val s1234 = union(s123, s4)
+  val s0 = singletonSet(0)
+  val s01234 = union(s0, s1234)
+
+  val t34 = union(t3, t4)
+  val t345 = union(t34, t5)
+  val t3456 = union(t345, t6)
+
+  println("8.- " + contains(diff(s1234, t3456), 1)) //true
+  println("9.- " + contains(diff(s1234, t3456), 2)) //true
+  println("10.- " + contains(diff(s1234, t3456), 3)) //false
+  println("11.- " + contains(diff(s1234, t3456), 4)) //false
+  println("12.- " + contains(diff(s1234, t3456), 5)) //false
+  println("13.- " + contains(diff(s1234, t3456), 6)) //false
+  /**
+   * Returns the subset of `s` for which `p` holds.
+   */
+  def filter(s: Set, p: Int => Boolean): Set = intersect(s, p)
+
+  /**
+   * The bounds for `forall` and `exists` are +/- 1000.
+   */
+  //val bound = 1000
+  val bound = 5
+  /**
+   * Returns whether all bounded integers within `s` satisfy `p`.
+   */
+
+  //  def forall(s: Set, p: Int => Boolean): Boolean = {
+  //    def iter(a: Int): Boolean = {
+  //      if (???) ???
+  //      else if (???) ???
+  //      else iter(???)
+  //    }
+  //    iter(???)
+  //  }
+
+  def forall(s: Set, p: Int => Boolean): Boolean = {
+    def iter(a: Int): Boolean = {
+      if (a > bound) true
+      else if (contains(s, a)) if (p(a)) iter(a + 1) else false
+      else iter(a + 1)
+    }
+    iter(-bound)
+  }
+
+  //{-10,-9,-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9,10}
+  //                 -5<--------------------->5  
+  //                     p = x => x % 2 == 0 (false)
+  //{-10,-9,-8,-7,-6, ,-4, ,-2, ,0, ,2, ,4, ,6,7,8,9,10}
+  //                -5<------------------->5  
+  //                     p = x => x % 2 == 0 (true)
+
+  val s0123456 = union(s01234, t3456)
+  val u7 = singletonSet(7)
+  val u8 = singletonSet(8)
+  val u9 = singletonSet(9)
+  val u10 = singletonSet(10)
+  val u78 = union(u7, u8)
+  val u910 = union(u9, u10)
+  val u78910 = union(u78, u910)
+  val s10 = union(s0123456, u78910)
+  val s_1 = singletonSet(-1)
+  val s_2 = singletonSet(-2); val s_12 = union(s_1, s_2)
+  val s_3 = singletonSet(-3); val s_123 = union(s_12, s_3)
+  val s_4 = singletonSet(-4); val s_1234 = union(s_123, s_4)
+  val s_5 = singletonSet(-5); val s_12345 = union(s_1234, s_5)
+  val s_6 = singletonSet(-6); val s_123456 = union(s_12345, s_6)
+  val s_7 = singletonSet(-7); val s_1234567 = union(s_123456, s_7)
+  val s_8 = singletonSet(-8); val s_12345678 = union(s_1234567, s_8)
+  val s_9 = singletonSet(-9); val s_123456789 = union(s_12345678, s_9)
+  val s_10 = singletonSet(-10); val s_12345678910 = union(s_123456789, s_10)
+  val sm_10_10 = union(s_12345678910, s10)
+
+  //{-10,-9,-8,-7,-6, ,-4, ,-2, ,0, ,2, ,4, ,6,7,8,9,10}
+  val e_10 = singletonSet(-10);
+  val e_9 = singletonSet(-9); val e_109 = union(e_10, e_9)
+  val e_8 = singletonSet(-8); val e_1098 = union(e_109, e_8)
+  val e_7 = singletonSet(-7); val e_10987 = union(e_1098, e_7)
+  val e_6 = singletonSet(-6); val e_109876 = union(e_10987, e_6)
+  val e_4 = singletonSet(-4); val e_1098764 = union(e_109876, e_4)
+  val e_2 = singletonSet(-2); val e_10987642 = union(e_1098764, e_2)
+  val e0 = singletonSet(0);
+  val e2 = singletonSet(2); val e02 = union(e0, e2)
+  val e4 = singletonSet(4); val e024 = union(e02, e4)
+  val e6 = singletonSet(6); val e0246 = union(e024, e6)
+  val e7 = singletonSet(7); val e02467 = union(e0246, e7)
+  val e8 = singletonSet(8); val e024678 = union(e02467, e7)
+  val e9 = singletonSet(9); val e0246789 = union(e024678, e9)
+  val e10 = singletonSet(10); val e024678910 = union(e0246789, e10)
+
+  val sm10_10_par = union(e_10987642, e024678910)
+
+  println("14.- " + forall(sm_10_10, x => x % 2 == 0)) // false
+  println("15.- " + forall(sm10_10_par, x => x % 2 == 0)) // true
+ 
+  /**
+   * Returns whether there exists a bounded integer within `s`
+   * that satisfies `p`.
+   */
+  // si for all devuelve false significa que EXISTE al menos uno de los elemento de s NO ha cumplido la condicion
+  // 
+  def exists(s: Set, p: Int => Boolean): Boolean = !forall(s, x => !p(x)) 
+ 
+  def existsonlyforcheck(s: Set, p: Int => Boolean): Boolean = {
+    def iter(a: Int): Boolean = {
+      if (a > bound) false
+      else if (contains(s, a)) if (p(a)) true else iter(a + 1)
+      else iter(a + 1)
+    }
+    iter(-bound)
+  }
+   def forallonlyforcheck(s: Set, p: Int => Boolean): Boolean = {
+    def iter(a: Int): Boolean = {
+      if (a > bound) true
+      else if (contains(s, a)) if (p(a)) iter(a + 1) else false
+      else iter(a + 1)
+    }
+    iter(-bound)
+  }
+
+  //{-10,-9,-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9,10}
+  //                 -5<--------------------->5  
+  //                     p = x => x % 2 == 0 (true) originalmente false con negacion true
+  //{-10,-9,-8,-7,-6, ,-4, ,-2, ,0, ,2, ,4, ,6,7,8,9,10}
+  //                -5<------------------->5  
+  //                     p = x => x % 2 == 0 (true) originalmente true con negacion false
+  //{-10,-9,-8,-7,-6,          1, 3,        6,7}
+  //                -5<------------------->5  ,singletonSet(3)
+  //                     p = x => x % 2 == 0 (false)
+  
+  println("16.- " + exists(sm_10_10, x => x % 2 == 0)) // true
+  println("17.- " + exists(sm10_10_par, x => x % 2 == 0)) // true
+  val no_par = union (union (union (union (e_109876, singletonSet (1)), singletonSet(3)), singletonSet(6)), singletonSet(7))
+		
+  
+  println("18.- " + exists(no_par,  x => x % 2 == 0))// false
+  
+  println("sm_10_10: " + toString(sm_10_10))
+  println("sm10_10_par: " + toString(sm10_10_par))
+  println("no_par: " + toString(no_par))
+  
+  
+  /**
+   * Returns a set transformed by applying `f` to each element of `s`.
+   */
+  // def exists(s: Set, p: Int => Boolean): Boolean     p = x => x % 2 == 0
+  
+  // map (s,f) contains (<-esto es el test) y if set s has an element x (<- esto es la funcion exists) wich when applied the function  f(?) would get y where ? is an element in the set s
+  def map(s: Set, f: Int => Int): Set = y => exists (s, x => f(x) == y) 
+  
+  var conjunto = union (singletonSet(2), singletonSet(3))
+  println ("my conjunto: " + toString (conjunto))
+  var dobleconjunto = map (conjunto, x => x  * 2)
+  println ("el doble : " + toString (dobleconjunto))
+      
+  //3.-exercice generalization of sum and producto
+  def mapReduce(f: Int => Int, combine: (Int, Int) => Int, zero: Int)(a: Int, b: Int): Int =
+    if (a > b) zero
+    else combine(f(a), mapReduce(f, combine, zero)(a + 1, b))
+
+  /**
+   * Displays the contents of a set
+   */
+  def toString(s: Set): String = {
+    val xs = for (i <- -10 to 10 if contains(s, i)) yield i
+    xs.mkString("{", ",", "}")
+  }
+
+  /**
+   * Prints the contents of a set on the console.
+   */
+  def printSet(s: Set) {
+    println(toString(s))
+  }
+}
