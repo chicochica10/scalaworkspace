@@ -37,11 +37,11 @@ class Nil[T] extends List[T]{
 // esta crea una lista con un solo elemento
 object myLista{
 	def singleton[T] (elem: T) = new Cons (elem, new Nil[T])
-	
+
 	singleton[Int](1) //los type parameters son redundantes
 	singleton[Boolean](true) //los type parameters son redundantes
-	
+
 	def enteros = singleton(1)
 	def boleanos = singleton(true)
-	
+
 }

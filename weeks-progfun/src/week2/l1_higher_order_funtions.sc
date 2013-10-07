@@ -66,4 +66,7 @@ object l1_higher_order_funtions {
   sum3(x => x * x * x)(1, 10)                     //> res15: Int = 3025
   sum3(x => if (x == 0) 1 else x * fact(x - 1))(1, 10)
                                                   //> res16: Int = 4037913
+// se puede escribir como
+ sum3((x: Int) => x * x * x)(1, 10)               //> res17: Int = 3025
+
 }
