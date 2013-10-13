@@ -44,11 +44,11 @@ class HuffmanSuite extends FunSuite {
 
   test("times") {
     var l = times(List('a', 'b', 'a'))
-    println ("items: " + l.length)
-    println ("0._1-> " + l.apply(0)._1 + " 0._2-> " + l.apply(0)._2)
-    println ("1._1-> " + l.apply(1)._1 + " 1._2-> " + l.apply(1)._2)
-  //  println ("2._1-> " + l.apply(2)._1 + " 2._2-> " + l.apply(2)._2)
-      
+    println("items: " + l.length)
+    println("0._1-> " + l.apply(0)._1 + " 0._2-> " + l.apply(0)._2)
+    println("1._1-> " + l.apply(1)._1 + " 1._2-> " + l.apply(1)._2)
+    //  println ("2._1-> " + l.apply(2)._1 + " 2._2-> " + l.apply(2)._2)
+
     assert(times(List('a', 'b', 'a')) == List(('a', 2), ('b', 1)))
   }
 
@@ -65,6 +65,11 @@ class HuffmanSuite extends FunSuite {
     assert(combine(leaflist2) === List(Leaf('x', 4), Fork(Leaf('e', 1), Leaf('t', 4), List('e', 't'), 5)))
   }
 
+  test("descode french") {
+    def b = new StringBuilder()
+    def d = decodedSecret.addString(b)
+    println("french -> " + d.toString())
+  }
   ignore("decode and encode a very short text should be identity") {
     new TestTrees {
       assert(decode(t1, encode(t1)("ab".toList)) === "ab".toList)

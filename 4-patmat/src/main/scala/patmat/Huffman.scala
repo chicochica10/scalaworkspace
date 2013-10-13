@@ -213,15 +213,15 @@ object Huffman {
   //where the argument trees is of the type List[CodeTree].
 
   //def until (xxx: ???, yyy: ???)(zzz: ???): ??? = ???
-//  def until(isSingleton: List[CodeTree] => Boolean,
-//    combined: List[CodeTree] => List[CodeTree])(trees: List[CodeTree]): CodeTree = {
-//
-//    if (isSingleton(trees)) {
-//      trees.head
-//    } else {
-//      until(isSingleton, combined)(combined(trees.tail))
-//    }
-//  }
+  //  def until(isSingleton: List[CodeTree] => Boolean,
+  //    combined: List[CodeTree] => List[CodeTree])(trees: List[CodeTree]): CodeTree = {
+  //
+  //    if (isSingleton(trees)) {
+  //      trees.head
+  //    } else {
+  //      until(isSingleton, combined)(combined(trees.tail))
+  //    }
+  //  }
 
   //mejorada
   def until[T](isSingleton: List[T] => Boolean,
@@ -239,7 +239,11 @@ object Huffman {
    * The parameter `chars` is an arbitrary text. This function extracts the character
    * frequencies from that text and creates a code tree based on them.
    */
-  def createCodeTree(chars: List[Char]): CodeTree = ???
+  //Finally, use the functions defined above to implement the function createCodeTree which respects the signature shown above.
+  def createCodeTree(chars: List[Char]): CodeTree = {
+
+    until(singleton, combine)(makeOrderedLeafList(times(chars)))
+  }
 
   // Part 3: Decoding
 
@@ -249,7 +253,29 @@ object Huffman {
    * This function decodes the bit sequence `bits` using the code tree `tree` and returns
    * the resulting list of characters.
    */
-  def decode(tree: CodeTree, bits: List[Bit]): List[Char] = ???
+  //Decoding also starts at the root of the tree. Given a sequence of bits to decode, we successively read the bits, 
+  //and for each 0, we choose the left branch, and for each 1 we choose the right branch.
+  //When we reach a leaf, we decode the corresponding character and then start again at the root of the tree. 
+  //As an example, given the Huffman tree above, the sequence of bits, 10001010 corresponds to BAC.
+
+  //abstract class CodeTree
+  //case class Fork(left: CodeTree, right: CodeTree, chars: List[Char], weight: Int) extends CodeTree
+  //case class Leaf(char: Char, weight: Int) extends CodeTree
+
+  def decode(tree: CodeTree, bits: List[Bit]): List[Char] = {
+
+    def decodeAux(subtree: CodeTree, bits: List[Bit]): List[Char] = subtree match {
+      case Leaf(c, _) => c :: decodeAux(tree, bits) //c :: Nil no sirve pq tenemos que recorrer toda la lista de bits y hay que llamar a decode de alguna manera con la lista de bits que queden
+      //                                                   NOTA. se hace referencia al tree y no al subtree el decir tenemos que ir desde el principio al raiz con los bits que queden segun la definicion
+      case Fork(left, right, _, _) => if (bits.isEmpty) Nil // hay que proteger de acceder a una lista nulan
+      else if (bits.head == 0) {
+        decodeAux(left, bits.tail)
+      } else {
+        decodeAux(right, bits.tail)
+      }
+    }
+    decodeAux(tree, bits)
+  }
 
   /**
    * A Huffman coding tree for the French language.
@@ -267,7 +293,7 @@ object Huffman {
   /**
    * Write a function that returns the decoded secret
    */
-  def decodedSecret: List[Char] = ???
+  def decodedSecret: List[Char] = decode(frenchCode, secret)
 
   // Part 4a: Encoding using Huffman tree
 
