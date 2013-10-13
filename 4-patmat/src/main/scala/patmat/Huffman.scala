@@ -301,6 +301,12 @@ object Huffman {
    * This function encodes `text` using the code tree `tree`
    * into a sequence of bits.
    */
+  //For a given Huffman tree, one can obtain the encoded representation of a character by traversing from the root of the tree to the leaf 
+  //containing the character. Along the way, when a left branch is chosen, a 0 is added to the representation, 
+  //and when a right branch is chosen, 1 is added to the representation. 
+  //Thus, for the Huffman tree above, the character D is encoded as 1011.
+  
+ // Your implementation must traverse the coding tree for each character, a task that should be done using a helper function.
   def encode(tree: CodeTree)(text: List[Char]): List[Bit] = ???
 
   // Part 4b: Encoding using code table
