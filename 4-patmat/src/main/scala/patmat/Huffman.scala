@@ -107,8 +107,8 @@ object Huffman {
     case Nil => Nil
     case c :: cs =>
       {
-        var tuplas = times(cs)
-        var myIndex = index(c, tuplas)
+        val tuplas = times(cs)
+        val myIndex = index(c, tuplas)
         if (myIndex >= 0) {
           tuplas.updated(myIndex, (c, tuplas.apply(myIndex)._2 + 1))
         } else {
@@ -180,15 +180,30 @@ object Huffman {
   //  the list constructed in the previous step, and (2) merges them by creating a new node of type Fork.
   //  Add this new tree to the list - which is now one element shorter - while preserving the order (by weight).
 
-  def combine(trees: List[CodeTree]): List[CodeTree] = trees match {
-    case Nil => trees
-    case x :: Nil => trees
-    case x :: y :: Nil => if (weight(x) < weight(y)) x :: y :: Nil else y :: x :: Nil
-    case x :: y :: xs => {
-      var comb = new Fork(x, y, chars(x) ::: chars(y), weight(x) + weight(y))
-      combine(comb :: xs).sortBy(ct => weight(ct))
+    def combine(trees: List[CodeTree]): List[CodeTree] = trees match {
+      case Nil => trees
+      case x :: Nil => trees
+      case x :: y :: Nil => if (weight(x) < weight(y)) x :: y :: Nil else y :: x :: Nil
+      case x :: y :: xs => {
+        val comb = new Fork(x, y, chars(x) ::: chars(y), weight(x) + weight(y))
+        //combine(comb :: xs).sortBy(ct => weight(ct))
+        combine(comb :: xs).sortWith((a, b) => weight(a) < weight(b))
+  
+      }
     }
-  }
+
+//  def combine(trees: List[CodeTree]): List[CodeTree] = {
+//    if (trees.isEmpty) List[CodeTree]()
+//    else if (trees.tail.isEmpty) trees
+//    else {
+//      val t1 = trees.head
+//      val t2 = trees.tail.head
+//
+//      val combined = Fork(t1, t2, chars(t1) ::: chars(t2), weight(t1) + weight(t2))
+//
+//      (combined :: trees.tail.tail).sortWith((a, b) => weight(a) < weight(b))
+//    }
+//  }
   /**
    * This function will be called in the following way:
    *
@@ -313,34 +328,33 @@ object Huffman {
   //case class Leaf(char: Char, weight: Int) extends CodeTree
 
   def encode(tree: CodeTree)(text: List[Char]): List[Bit] = {
-	 def encodeAux (subtree: CodeTree) (text:List[Char]): List[Bit] = {
-	   if (text.isEmpty) Nil 
-	   else {
-		   subtree match {
-		     case Leaf (_, _) => encodeAux (tree)(text.tail)
-		     case Fork (left, right, _, _) => if (chars(left).contains (text.head)) 0 :: encodeAux (left)(text)
-		       else 1 :: encodeAux(right)(text)
-		   }
-	   }
-	 }
-	 
-	 encodeAux (tree)(text)
+    def encodeAux(subtree: CodeTree)(text: List[Char]): List[Bit] = {
+      if (text.isEmpty) Nil
+      else {
+        subtree match {
+          case Leaf(_, _) => encodeAux(tree)(text.tail)
+          case Fork(left, right, _, _) => if (chars(left).contains(text.head)) 0 :: encodeAux(left)(text)
+          else 1 :: encodeAux(right)(text)
+        }
+      }
+    }
+
+    encodeAux(tree)(text)
   }
-  
-  
-//  def encode(tree: CodeTree)(text: List[Char]): List[Bit] = {
-//    def encodeAux(subtree: CodeTree)(text: List[Char]): List[Bit] = subtree match {
-//
-//      case Leaf(_, _) => encodeAux(tree)(text.tail) // falta la comprobacion de nil en el text
-//      case Fork(left, right, cs, _) => cs match { // no sirve pq cs siempre va a tener una lista
-//        case Nil => Nil
-//        case x :: xs => if (chars(left).contains(x)) 0 :: encode(subtree)(text)
-//        else 1 :: encode(subtree)(text)
-//      }
-//    }
-//
-//    encodeAux(tree)(text)
-//  }
+
+  //  def encode(tree: CodeTree)(text: List[Char]): List[Bit] = {
+  //    def encodeAux(subtree: CodeTree)(text: List[Char]): List[Bit] = subtree match {
+  //
+  //      case Leaf(_, _) => encodeAux(tree)(text.tail) // falta la comprobacion de nil en el text
+  //      case Fork(left, right, cs, _) => cs match { // no sirve pq cs siempre va a tener una lista
+  //        case Nil => Nil
+  //        case x :: xs => if (chars(left).contains(x)) 0 :: encode(subtree)(text)
+  //        else 1 :: encode(subtree)(text)
+  //      }
+  //    }
+  //
+  //    encodeAux(tree)(text)
+  //  }
 
   // Part 4b: Encoding using code table
 
@@ -350,9 +364,9 @@ object Huffman {
    * This function returns the bit sequence that represents the character `char` in
    * the code table `table`.
    */
-  def codeBits(table: CodeTable)(char: Char): List[Bit] = table match  {
-     case Nil => Nil
-     case (x,lb)::xs => if (x==char) lb else codeBits (xs)(char)
+  def codeBits(table: CodeTable)(char: Char): List[Bit] = table match {
+    case Nil => Nil
+    case (x, lb) :: xs => if (x == char) lb else codeBits(xs)(char)
   }
 
   /**
@@ -363,14 +377,23 @@ object Huffman {
    * a valid code tree that can be represented as a code table. Using the code tables of the
    * sub-trees, think of how to build the code table for the entire tree.
    */
-  def convert(tree: CodeTree): CodeTable = ???
+  // def encode(tree: CodeTree)(text: List[Char]): List[Bit] = {
+
+  def convert(tree: CodeTree): CodeTable = {
+
+    def convertAux(subTree: CodeTree): CodeTable = subTree match {
+      case Leaf(c, _) => (c, encode(tree)(c :: Nil)) :: Nil //ojo encoding de todo el trozo de arbol hasta la hoja
+      case Fork(left, right, _, _) => convertAux(left) ::: convertAux(right)
+    }
+    convertAux(tree)
+  }
 
   /**
    * This function takes two code tables and merges them into one. Depending on how you
    * use it in the `convert` method above, this merge method might also do some transformations
    * on the two parameter code tables.
    */
-  def mergeCodeTables(a: CodeTable, b: CodeTable): CodeTable = ???
+  def mergeCodeTables(a: CodeTable, b: CodeTable): CodeTable = a ::: b
 
   /**
    * This function encodes `text` according to the code tree `tree`.
@@ -378,5 +401,13 @@ object Huffman {
    * To speed up the encoding process, it first converts the code tree to a code table
    * and then uses it to perform the actual encoding.
    */
-  def quickEncode(tree: CodeTree)(text: List[Char]): List[Bit] = ???
+  def quickEncode(tree: CodeTree)(text: List[Char]): List[Bit] = {
+    val codeTable = convert(tree)
+    def quickEncodeAux(text: List[Char]): List[Bit] = text match {
+      case Nil => Nil
+      case c :: xs => codeBits(codeTable)(c) ::: quickEncodeAux(xs)
+    }
+
+    quickEncodeAux(text)
+  }
 }
