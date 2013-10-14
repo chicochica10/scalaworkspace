@@ -305,9 +305,42 @@ object Huffman {
   //containing the character. Along the way, when a left branch is chosen, a 0 is added to the representation, 
   //and when a right branch is chosen, 1 is added to the representation. 
   //Thus, for the Huffman tree above, the character D is encoded as 1011.
+
+  // Your implementation must traverse the coding tree for each character, a task that should be done using a helper function.
+
+  //abstract class CodeTree
+  //case class Fork(left: CodeTree, right: CodeTree, chars: List[Char], weight: Int) extends CodeTree
+  //case class Leaf(char: Char, weight: Int) extends CodeTree
+
+  def encode(tree: CodeTree)(text: List[Char]): List[Bit] = {
+	 def encodeAux (subtree: CodeTree) (text:List[Char]): List[Bit] = {
+	   if (text.isEmpty) Nil 
+	   else {
+		   subtree match {
+		     case Leaf (_, _) => encodeAux (tree)(text.tail)
+		     case Fork (left, right, _, _) => if (chars(left).contains (text.head)) 0 :: encodeAux (left)(text)
+		       else 1 :: encodeAux(right)(text)
+		   }
+	   }
+	 }
+	 
+	 encodeAux (tree)(text)
+  }
   
- // Your implementation must traverse the coding tree for each character, a task that should be done using a helper function.
-  def encode(tree: CodeTree)(text: List[Char]): List[Bit] = ???
+  
+//  def encode(tree: CodeTree)(text: List[Char]): List[Bit] = {
+//    def encodeAux(subtree: CodeTree)(text: List[Char]): List[Bit] = subtree match {
+//
+//      case Leaf(_, _) => encodeAux(tree)(text.tail) // falta la comprobacion de nil en el text
+//      case Fork(left, right, cs, _) => cs match { // no sirve pq cs siempre va a tener una lista
+//        case Nil => Nil
+//        case x :: xs => if (chars(left).contains(x)) 0 :: encode(subtree)(text)
+//        else 1 :: encode(subtree)(text)
+//      }
+//    }
+//
+//    encodeAux(tree)(text)
+//  }
 
   // Part 4b: Encoding using code table
 

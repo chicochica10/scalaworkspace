@@ -70,7 +70,7 @@ class HuffmanSuite extends FunSuite {
     def d = decodedSecret.addString(b)
     println("french -> " + d.toString())
   }
-  ignore("decode and encode a very short text should be identity") {
+  test("decode and encode a very short text should be identity") {
     new TestTrees {
       assert(decode(t1, encode(t1)("ab".toList)) === "ab".toList)
     }
