@@ -1,10 +1,11 @@
 package week3
 
-//NOTA DE LA LECCION: los traits con como interfaces que admiten metodos y propiedades se implementan con with se diferencia de la clases scala que no pueden llevar parametros como los lleva p.e la clase Rational
+//NOTA DE LA LECCION: los traits con como interfaces que admiten metodos y propiedades se implementan con with (pero creo que tienen que extender de otra clase primero)
+//se diferencia de la clases scala que no pueden llevar parametros como los lleva p.e la clase Rational
 
 //formas de importar
 //import week3.Rational
-import week3.{ Rational, l3_scalaHello }
+import week3.{ Rational, L3_scalaHello }
 //import week3._
 
 object l4_scratch {
