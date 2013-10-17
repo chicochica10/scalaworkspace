@@ -16,6 +16,8 @@ trait List[T]{
 	def head: T
 	def tail: List[T]
 }
+
+
 class Cons[T] (val head:T, val tail: List[T]) extends List[T]{
 	def isEmpty = false //nunca empty
 	//el head al tener val el parametro no hace falta ya es un campo IDEM Para tail
