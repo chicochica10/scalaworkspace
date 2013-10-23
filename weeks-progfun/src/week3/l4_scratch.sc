@@ -5,7 +5,7 @@ package week3
 
 //formas de importar
 //import week3.Rational
-import week3.{ Rational, L3_scalaHello }
+//import week3.{ Rational, L3_scalaHello }
 //import week3._
 
 object l4_scratch {
