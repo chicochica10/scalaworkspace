@@ -39,7 +39,11 @@ case class Sum (e1: Expr, e2: Expr) extends Expr // case class
 // con lo que puedo hacer
 Number (2) // si quito los case daria un error de compilacion
                                                   //> res0: week4.l9_pattern_matching_1.Number = Number(2)
-Sum (Number(1),Number (3))                        //> res1: week4.l9_pattern_matching_1.Sum = Sum(Number(1),Number(3))
+// se puede poner de manera optativa
+Number (n = 2)                                    //> res1: week4.l9_pattern_matching_1.Number = Number(2)
+//pero no
+//Number (t = 2)
+Sum (Number(1),Number (3))                        //> res2: week4.l9_pattern_matching_1.Sum = Sum(Number(1),Number(3))
 
 // asi evitamos el uso de new Number(2)
 
@@ -51,7 +55,7 @@ def eval (e: Expr): Int = e match {
 }                                                 //> eval: (e: week4.l9_pattern_matching_1.Expr)Int
 
 // ejemplo
-eval (Sum(Number(1), Number(2)))                  //> res2: Int = 3
+eval (Sum(Number(1), Number(2)))                  //> res3: Int = 3
 
 // se puede hacer dentro del trait mejor
 // verlo en l9_patter_matching_2
