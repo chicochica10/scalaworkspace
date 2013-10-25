@@ -28,8 +28,14 @@ object l1_conversion_array_vector {
 	
 	// el mas jodido
 	// posibles combinaciones de numeros entre 1..M y 1..N
+	// si fuera solo con map tendriamos un vector de vectores
+	(1 to 5) map (x=> (1 to 3) map (y => (x,y)))
+                                                  //> res10: scala.collection.immutable.IndexedSeq[scala.collection.immutable.Inde
+                                                  //| xedSeq[(Int, Int)]] = Vector(Vector((1,1), (1,2), (1,3)), Vector((2,1), (2,2
+                                                  //| ), (2,3)), Vector((3,1), (3,2), (3,3)), Vector((4,1), (4,2), (4,3)), Vector(
+                                                  //| (5,1), (5,2), (5,3)))
 	(1 to 5) flatMap (x=> (1 to 3) map (y => (x,y)))
-                                                  //> res10: scala.collection.immutable.IndexedSeq[(Int, Int)] = Vector((1,1), (1,
+                                                  //> res11: scala.collection.immutable.IndexedSeq[(Int, Int)] = Vector((1,1), (1,
                                                   //| 2), (1,3), (2,1), (2,2), (2,3), (3,1), (3,2), (3,3), (4,1), (4,2), (4,3), (5
                                                   //| ,1), (5,2), (5,3))
 	// multiplicacion de dos vectores
@@ -62,8 +68,8 @@ object l1_conversion_array_vector {
  def isPrime(n: Int): Boolean = (2 until n) forall (d => n%d !=0)
                                                   //> isPrime: (n: Int)Boolean
  
- isPrime (5)                                      //> res11: Boolean = true
- isPrime (6)                                      //> res12: Boolean = false
+ isPrime (5)                                      //> res12: Boolean = true
+ isPrime (6)                                      //> res13: Boolean = false
  }
  
  
