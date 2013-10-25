@@ -53,7 +53,7 @@ object l2_handling_nested_sequences {
   
   //lleva el case OJO!!!
   case class Person (name: String, age: Int)
-  val persons = List (new Person("angel",21), new Person ("pepe",13))
+  val persons = List ( Person("angel",21),  Person ("pepe",13)) // como lleva el case no hay que pner new
                                                   //> persons  : List[week6.l2_handling_nested_sequences.Person] = List(Person(an
                                                   //| gel,21), Person(pepe,13))
   // se pueden poner {}
