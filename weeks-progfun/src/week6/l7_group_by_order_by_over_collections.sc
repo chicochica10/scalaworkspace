@@ -89,6 +89,7 @@ object l7_group_by_order_by_over_collections {
   val cap1 = capitalOfCountry withDefaultValue "<desconocida>"
                                                   //> cap1  : scala.collection.immutable.Map[String,String] = Map(US -> Whasingth
                                                   //| on, Switzerland -> Bern)
+                
   cap1("andorra")                                 //> res4: String = <desconocida>
 
   class Poly4(terms0: Map[Int, Double]) {
@@ -133,4 +134,38 @@ object l7_group_by_order_by_over_collections {
   val p10 = new Poly5(0 -> 3.0, 3 -> 7.0)         //> p10  : week6.l7_group_by_order_by_over_collections.Poly5 = 7.0x^3 + 3.0x^0
   val res5 = p9 + p10                             //> res5  : week6.l7_group_by_order_by_over_collections.Poly5 = 6.2x^5 + 11.0x^
                                                   //| 3 + 2.0x^1 + 3.0x^0
+  
+  // REESCRITURA USANDO: foldleft
+  // que es foldleft?
+  val myList = List (1,2,3,4,5,6,7,8,9,10)        //> myList  : List[Int] = List(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+  //suma de los numeros
+  // recorre los elementos de la lista en a y acumula la suma en b partiendo de 0 (b inicialmente es el 0)
+  myList.foldRight (0)((b,a) => b+a)              //> res6: Int = 55
+  //concatena partiendo de X
+  myList.foldLeft ("X")((b,a) => b + a)           //> res7: String = X12345678910
+  
+  
+  class Poly6(terms0: Map[Int, Double]) {
+  	def this (bindings: (Int, Double)*) = this (bindings.toMap) // constructor alternativo que toma un numero indeterminado de paramentros (*) y llama al contructor primario
+    val terms = terms0 withDefaultValue 0.0
+    def +(other: Poly6) = new Poly6(terms ++ (other.terms foldLeft terms)(addTerm)) //terms  es el "elemento 0" recorre other.terms y "acumula" los resultados con addTerm empezado por poner todos los terms
+		def addTerm (terms: Map[Int, Double], term: (Int,Double)): Map [Int,Double] = { //terms empieza por el elemento 0 y recorre los elementos (term) de other.terms
+			val (exp,coef) = term
+			terms + (exp -> (coef + terms(exp))) //se añade directamente pq la version anterior necesitaba crear un map y luego concatenar
+		}
+
+    override def toString =
+      (for ((exp, coeff) <- terms.toList.sorted.reverse) yield coeff + "x^" + exp) mkString " + "
+  }
+
+  val p11 = new Poly6(1 -> 2.0, 3 -> 4.0, 5 -> 6.2)
+                                                  //> p11  : week6.l7_group_by_order_by_over_collections.Poly6 = 6.2x^5 + 4.0x^3 
+                                                  //| + 2.0x^1
+  val p12 = new Poly6(0 -> 3.0, 3 -> 7.0)         //> p12  : week6.l7_group_by_order_by_over_collections.Poly6 = 7.0x^3 + 3.0x^0
+  val res6 = p11 + p12                            //> res6  : week6.l7_group_by_order_by_over_collections.Poly6 = 6.2x^5 + 11.0x^
+                                                  //| 3 + 2.0x^1 + 3.0x^0
+  
+  
+  
+  
 }
