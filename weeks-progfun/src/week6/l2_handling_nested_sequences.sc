@@ -51,13 +51,14 @@ object l2_handling_nested_sequences {
                                                   //| 2), (4,1), (4,3), (5,2), (6,1), (6,5))
   // como esto es jodido de entender metemos las expresiones for
   
-  //lleva el case OJO!!!
+  //lleva el case OJO!!! ver l9_pattern_matching_1 week4
   case class Person (name: String, age: Int)
   val persons = List ( Person("angel",21),  Person ("pepe",13)) // como lleva el case no hay que pner new
                                                   //> persons  : List[week6.l2_handling_nested_sequences.Person] = List(Person(an
                                                   //| gel,21), Person(pepe,13))
   // se pueden poner {}
-  for (p <- persons  if p.age >20) yield p.name   //> res3: List[String] = List(angel)
+  for (p <- persons
+  if p.age >20) yield p.name                      //> res3: List[String] = List(angel)
   
   // es identico a decir
   
@@ -65,12 +66,21 @@ object l2_handling_nested_sequences {
                                                   //> res4: List[String] = List(angel)
                                                   
   // ejemplo de los primos con for
+  for (
+   i <- 1 until n;
+   j <- 1 until i
+   if (isPrime (i+j))
+  ) yield (i,j)                                   //> res5: scala.collection.immutable.IndexedSeq[(Int, Int)] = Vector((2,1), (3,
+                                                  //| 2), (4,1), (4,3), (5,2), (6,1), (6,5))
+  
+  //o bien
   for {
    i <- 1 until n
    j <- 1 until i
    if (isPrime (i+j))
-  } yield (i,j)                                   //> res5: scala.collection.immutable.IndexedSeq[(Int, Int)] = Vector((2,1), (3,
+  } yield (i,j)                                   //> res6: scala.collection.immutable.IndexedSeq[(Int, Int)] = Vector((2,1), (3,
                                                   //| 2), (4,1), (4,3), (5,2), (6,1), (6,5))
+ 
   
   //producto escalar viejo
     def scalarProduct1 (v1: Vector [Double], v2: Vector[Double]): Double =
@@ -80,5 +90,5 @@ object l2_handling_nested_sequences {
   def scalarProduct(xs: List[Double], ys: List[Double]) : Double =
   (for { (x,y) <- xs zip ys } yield x*y).sum      //> scalarProduct: (xs: List[Double], ys: List[Double])Double
   
-  scalarProduct (List(1,1,1), List(1,1,1))        //> res6: Double = 3.0
+  scalarProduct (List(1,1,1), List(1,1,1))        //> res7: Double = 3.0
 }
