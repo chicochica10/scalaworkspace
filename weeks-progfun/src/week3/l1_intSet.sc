@@ -6,9 +6,6 @@ object l1_intSet {
   //val t1 = new NonEmpty (3, new Empty, new Empty) no hace falta hacer el new de Empty
   val t1 = new NonEmpty (3, Empty, Empty)         //> t1  : week3.NonEmpty = {.3.}
   val t2 = t1 incl 4                              //> t2  : week3.IntSet = {.3{.4.}}
-  
-  
-  
 }
 
 //superclass
