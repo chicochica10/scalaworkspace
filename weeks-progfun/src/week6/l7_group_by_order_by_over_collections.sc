@@ -164,8 +164,4 @@ object l7_group_by_order_by_over_collections {
   val p12 = new Poly6(0 -> 3.0, 3 -> 7.0)         //> p12  : week6.l7_group_by_order_by_over_collections.Poly6 = 7.0x^3 + 3.0x^0
   val res6 = p11 + p12                            //> res6  : week6.l7_group_by_order_by_over_collections.Poly6 = 6.2x^5 + 11.0x^
                                                   //| 3 + 2.0x^1 + 3.0x^0
-  
-  
-  
-  
 }

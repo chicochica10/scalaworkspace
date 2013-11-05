@@ -68,7 +68,10 @@ object l8_telephone {
     // no tiene en cuenta que en words hay caracteres raros como -
 
     // recuerda angel groupBy necesita el nombre de la funcion, no la ejecucion de la funcion ¡¡¡SIEMPRE LA PROGRAMACION FUNCIONAL!!!
-    words groupBy wordCode                        //> wordsForNum  : Map[String,Seq[String]] = Map(63972278 -> List(newscast), 29
+    //words groupBy wordCode
+    //como puede haber numeros que no tengan
+    //asociada palabras ponemos la withDefault
+    words groupBy wordCode withDefaultValue Seq() //> wordsForNum  : Map[String,Seq[String]] = Map(63972278 -> List(newscast), 29
                                                   //| 237638427 -> List(cybernetics), 782754448 -> List(starlight), 2559464 -> Li
                                                   //| st(allying), 862532733 -> List(uncleared), 365692259 -> List(enjoyably), 86
                                                   //| 8437 -> List(unties), 33767833 -> List(deportee), 742533 -> List(picked), 3
@@ -82,9 +85,31 @@ object l8_telephone {
                                                   //| 4647 -> List(ringings), 633738 -> List(offset), 847825 -> List(visual), 772
                                                   //| 832 -> List(Pravda), 47
                                                   //| Output exceeds cutoff limit.
-  // devuelve todas las formas de codificar  un numero como una lista de palabras
-  //	def translate (phoneNumber: String) = ???
 
-  //  val phoneNumber = "7225247386"
-  //  translate(phoneNumber)
+  // devuelve todas las formas de codificar  un numero como una lista de palabras
+  // por lo hace por trozos: ejemplo para 7225247386: 7, 72, 722,7225 da un
+  // conjunto de listas, cada lista son las palabras que se pueden formar con el 7, otra lista con las palabras del 72, etc...
+  // cuando haya terminado con el 7 se desecha y se empieza con el 2, 22, 225...
+  // luego se desecha y comienza de nuevo
+  def encode(phoneNumber: String): Set[List[String]] =
+    if (phoneNumber.isEmpty) Set(List())
+    else {
+      for {
+        split <- 1 to phoneNumber.length() //pilla split y recorre todos los numeros cogiendo
+        words <- wordsForNum(phoneNumber take split) //sin el get (pq le hemos añadido wordsForNum withDefault
+        rest <- encode(phoneNumber drop split) // seguimos con el resto del numero de telefono
+      } yield words :: rest
+    }.toSet                                       //> encode: (phoneNumber: String)Set[List[String]]
+
+  val phoneNumber = "7225247386"                  //> phoneNumber  : String = 7225247386
+  encode(phoneNumber)                             //> res2: Set[List[String]] = Set(List(rack, ah, re, to), List(sack, ah, re, to
+                                                  //| ), List(Scala, ire, to), List(sack, air, fun), List(rack, air, fun), List(r
+                                                  //| ack, bird, to), List(pack, air, fun), List(pack, ah, re, to), List(pack, bi
+                                                  //| rd, to), List(Scala, is, fun), List(sack, bird, to))
+  def translate (phoneNumber: String): Set[String] =
+  	encode (phoneNumber) map (_ mkString " ") //> translate: (phoneNumber: String)Set[String]
+  translate (phoneNumber)                         //> res3: Set[String] = Set(sack air fun, pack ah re to, pack bird to, Scala ir
+                                                  //| e to, Scala is fun, rack ah re to, pack air fun, sack bird to, rack bird to
+                                                  //| , sack ah re to, rack air fun)
+  
 }
